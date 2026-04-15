@@ -1,5 +1,7 @@
 # Бот для [TETR.IO](https://tetr.io/about/desktop/) написанный на Python и Zig
 
+[english version of this readme](README.en.md)
+
 >   [!WARNING]
 >   1. Использование ботов в TETRIO карается вечным IP баном без возможности апелляции.  
 >   2. Данное ПО во время исполнения, частично берет под контроль клавиатуру пользователя.  
