@@ -1,0 +1,6 @@
+global_hotkeys==0.1.7
+keyboard==0.13.5
+mss==10.1.0
+numpy==2.4.4
+opencv-python==4.13.0.92
+pywin32==311
