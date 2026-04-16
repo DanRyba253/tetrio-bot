@@ -72,15 +72,15 @@ assert(adapter_module is not None)
 assert(engine_path != "")
 
 adapter = adapter_module.Adapter(conf.activation_key)
+engine = sp.Popen([engine_path], stdin=sp.PIPE, stdout=sp.PIPE, text=True)
+fail_counter = 0
 
 def signal_handler(*_):
     adapter.deinit()
+    engine.terminate()
     sys.exit(0)
 
 signal.signal(signal.SIGTERM, signal_handler)
-
-engine = sp.Popen([engine_path], stdin=sp.PIPE, stdout=sp.PIPE, text=True)
-fail_counter = 0
 
 while True:
     adapter.wait_until_active()
