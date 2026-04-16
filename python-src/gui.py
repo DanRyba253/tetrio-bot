@@ -1,7 +1,9 @@
 from tkinter import *
 from tkinter import ttk
+from tkinter import messagebox
 import config
 from dataclasses import dataclass
+import debug_parser
 
 @dataclass
 class Translation:
@@ -16,6 +18,10 @@ class Translation:
     ms_label: str
     start_label: str
     stop_label: str
+    debug_label: str
+    debug_error_title: str
+    debug_error_msg: str
+    debug_img_title: str
 
 translations = {
     "ru": Translation(
@@ -30,6 +36,10 @@ translations = {
         ms_label="мс",
         start_label="Запустить",
         stop_label="Остановить",
+        debug_label="Проверить парсинг скриншота",
+        debug_error_title="Ошибка проверки парсинга скриншота",
+        debug_error_msg="Убедитесь, что нужный скриншот сохранен в папке со стартовым скриптом под именем 'screenshot.png' и параметры 'Искать углов' и 'Расстояние между углами' введены правильно.",
+        debug_img_title="Левый и правый верхние углы доски должны быть выделены красным цветом"
     ),
     "en": Translation(
         title="Bot for TETR.IO",
@@ -43,6 +53,10 @@ translations = {
         ms_label="ms",
         start_label="Start",
         stop_label="Stop",
+        debug_label="Check screenshot parsing",
+        debug_error_title="Checking screenshot parsing failed",
+        debug_error_msg="Make sure a screenshot file is in the folder with the start script under the name 'screenshot.png' and that parameters 'Corners to seek' and 'Distance between corners' are entered correctly.",
+        debug_img_title="Left and right top corners of the board should be highlighted in red"
     ),
 }
 
@@ -132,7 +146,20 @@ class GUI(Tk):
         self.dist_var = StringVar()
         self.dist_var.set(str(conf.corners_min_dist))
         self.dist = ttk.Entry(self.options, width=5, justify="right", textvariable=self.dist_var)
-        self.dist.grid(column=2, row=5, sticky="E", padx=(0, 5))
+        self.dist.grid(column=2, row=5, sticky="E", padx=(0, 5), pady=(0, 5))
+
+        def debug():
+            t = translations[self.lang_combo.get()]
+            try:
+                corners_count = int(self.corners_var.get())
+                min_dist = int(self.dist_var.get())
+                debug_parser.debug_parser(corners_count, min_dist, "debug")
+            except:
+                messagebox.showerror(title=t.debug_error_title, message=t.debug_error_msg)
+
+        self.debug_btn_text = StringVar()
+        self.debug_btn = ttk.Button(self.options, textvariable=self.debug_btn_text, command=debug)
+        self.debug_btn.grid(column=1, row=6, columnspan=2, sticky="WE", padx=(0, 5))
 
         def btn_command():
             if (not self.valid_conf()): return
@@ -172,6 +199,7 @@ class GUI(Tk):
             self.corners_label_var.set(t.corners_label)
             self.dist_label_var.set(t.dist_label)
             self.ms_label_var.set(t.ms_label)
+            self.debug_btn_text.set(t.debug_label)
             self.update_btn_text()
 
         self.lang_combo.bind("<<ComboboxSelected>>", on_lang_change)
